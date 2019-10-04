@@ -3,6 +3,8 @@ package com.example.tabs.Fragments;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +46,7 @@ public class ThirdFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-                String mJSONURLString="https://grupohit.net/igenter/auditoria/GuardarAuditoria";
+                String mJSONURLString="http://192.168.11.33:9090/Mails";
                 JSONObject jsonBody = new JSONObject();
                 cvve = view.findViewById(R.id.cvcve);
                 operation = view.findViewById(R.id.operation);
@@ -65,13 +67,27 @@ public class ThirdFragment extends Fragment {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                result.setText(response.toString());
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                                if (prev != null) {
+                                    ft.remove(prev);
+                                }
+                                ft.addToBackStack(null);
+                                DialogFragment dialogFragment = new DialogFragment();
+                                dialogFragment.show(ft, "dialog");
                             }
                         },
                         new Response.ErrorListener(){
                             @Override
                             public void onErrorResponse(VolleyError error){
-                                result.setText("error al llamar la aplicación");
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                                if (prev != null) {
+                                    ft.remove(prev);
+                                }
+                                ft.addToBackStack(null);
+                                DialogFragment dialogFragment = new DialogFragment();
+                                dialogFragment.show(ft, "dialog");
                             }
                         }
                 );
@@ -80,7 +96,7 @@ public class ThirdFragment extends Fragment {
                 requestQueue.add(jsonObjectRequest);
             }
         });
-
+        return view;
     }
 
 }
